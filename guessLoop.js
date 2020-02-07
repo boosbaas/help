@@ -11,40 +11,78 @@ function ask(questionText) {
 //
 
 
-let theNumber = 46; // player's number QUESTION: should it be a const or a let?
+let theNumber; // player's number 
+
+//opening dialogue for game, tests to make sure number entered is betwwen 1 & 100. 
+async function gameStart() {
+    let opening = await ask('I\'m bored. Play the number game with me.\b Pleeeeeease.Just enter a number, I\'ll close my eyes.\nType in your number: ');
 
 
-function computerNumber(min, max) { Math.floor(Math.random() * (max - min + 1)) + min }; //computer's guesses
-
-//opening dialogue for game, tests to make sure number entered is betwwen 1 & 100. QUESTION: how do I only get whole numbers?
-/*async function gameStart() {
-    console.log('I\'m bored. Play the number game with me.');
-    let opening = await ask('Pleeeeeease. Just enter a number, I\'ll close my eyes.');
-        if (opening <= 100 && opening >= 1) {
-        console.log('Oh goody! You chose ' + opening);
+    //opening = parseInt(opening);
+    if (opening > 100 || opening < 1) {
+        await ask('Hey, no cheating. Pick a number between 1 and 100: ');
+        //break;
+    } else{
         theNumber = opening;
-    } else {
-        console.log('Hey, no cheating. Pick a number between 1 and 100');
-    } 
-}
-gameStart();*/
-function computerNumber(min, max) { Math.floor(Math.random() * (max - min + 1)) + min }; //computer's guesses
-//******computer gets 10 chances to guess the number */
-function gamePlay(theNumber) {
-    console.log('First guess. is your number:  ' + computerNumber(1, 100));
-    for (guessCount = 0; guessCount < 10; guessCount++) {
-        if (computerNumber === theNumber) {
-            console.log('You got it!');
-        } else if (computerNumber > theNumber) {
-            console.log('Too high.');
-            let nextComputerNumber = computerNumber(1, computerNumber);
-            computerNumber = nextComputerNumber;
-            console.log(computerNumber)
-        }
+        console.log('Finally. You chose ' + theNumber + ' Let\'s get guessing');
+        //break;
     }
-}
 
-gamePlay();
+
+
+
+    //******computer gets 10 chances to guess the number */
+
+    function computerNumber(min, max) {
+        return (Math.floor(Math.random() * (max - min + 1)) + min);
+    };
+    let computersGuess = computerNumber(1, 100)
+
+    async function comparingNumbers() {
+        let guessMax = 100;
+        let guessMin = 1;
+        let count = 0;
+        //human answer
+        let humanAnswer2High = await ask('It\'s lower than ' + computersGuess);
+        let humanAnswer2Low = await ask('It\'s higher than ' + computersGuess);
+        let humanAnswerJustRight = await ask('Such a smart computer! you got it in ' + count)
+        console.log('First guess. Is your number:  ' + computersGuess);
+
+        while (computerNumber !== theNumber && count < 10) {
+            computerNumber(guessMin, guessMax)
+            count += 1;
+            if (computerNumber > theNumber) {
+                console.log(humanAnswer2High);
+                guessMax = computersGuess;
+                computersGuess = computerNumber(guessMin, guessMax);
+                console.log('this is the computers guess ' + computersGuess);
+                break;
+            } else if (computerNumber < theNumber) {
+                console.log(humanAnswer2Low);
+                guessMin = computersGuess;
+                computersGuess = computerNumber(guessMin, guessMax);
+                console.log('this is the computers guess ' + computersGuess);
+                break;
+            } else {
+                console.log(humanAnswerJustRight);
+                break;
+            }
+        } process.exit
+    }
+    comparingNumbers();
+    
+}
+gameStart();
+
+
+
+
+
+
+
+
+
+
 // this is actually for when the computer chooses the number and the player gets
 /*while (guessCount < 8) {
     async function numberGuessed() {
