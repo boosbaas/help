@@ -11,67 +11,73 @@ function ask(questionText) {
 //
 
 
-let theNumber; // player's number 
+let theChosenNumber; // player's number 
 
 //opening dialogue for game, tests to make sure number entered is betwwen 1 & 100. 
 async function gameStart() {
-    let opening = await ask('I\'m bored. Play the number game with me.\b Pleeeeeease.Just enter a number, I\'ll close my eyes.\nType in your number: ');
-
-
-    //opening = parseInt(opening);
-    if (opening > 100 || opening < 1) {
-        await ask('Hey, no cheating. Pick a number between 1 and 100: ');
-        //break;
-    } else{
-        theNumber = opening;
-        console.log('Finally. You chose ' + theNumber + ' Let\'s get guessing');
-        //break;
-    }
-
-
-
-
-    //******computer gets 10 chances to guess the number */
 
     function computerNumber(min, max) {
         return (Math.floor(Math.random() * (max - min + 1)) + min);
     };
-    let computersGuess = computerNumber(1, 100)
+    let computersGuess = computerNumber(1, 100);
+    console.log(computersGuess)//remove before final submit, just checking
+    let theNumber = await ask('I\'m bored. Play the number game with me.\b Pleeeeeease.Just enter a number between 1 and 100, I\'ll close my eyes.\nType in your number: ');
+    theNumber = parseInt(theNumber);
+    console.log(theNumber) //remove before final submit, just checking
+    while (theNumber !== computersGuess) {
+        theNumber = await ask('Hey, no cheating. You wanna be here all day? Pick a number between 1 and 100: ');
+        theNumber = parseInt(theNumber);
+        console.log(theNumber)//remove before final submit, just checking
+        if (theNumber < 100 && theNumber > 1) {
+            console.log('Took you long enough. Let\'s get guessing');
+            break;
+        }
+       
+    }
+    console.log(theNumber);//remove before final submit, just checking
+
+    console.log('First guess. Is your number:  ' + computersGuess);
+    theChosenNumber = theNumber;
+    console.log(theChosenNumber)
+
 
     async function comparingNumbers() {
         let guessMax = 100;
         let guessMin = 1;
         let count = 0;
-        //human answer
-        let humanAnswer2High = await ask('It\'s lower than ' + computersGuess);
-        let humanAnswer2Low = await ask('It\'s higher than ' + computersGuess);
-        let humanAnswerJustRight = await ask('Such a smart computer! you got it in ' + count)
-        console.log('First guess. Is your number:  ' + computersGuess);
+        //getting input from player about whether number is higher or lower
+        let computerQuestion = await ask('Is ' + computersGuess + ' the number you chose? ')
+        let computerQuestionHighLow = await ask('Is it higher? ')
+        let humanAnswer2High = computerQuestionHighLow;
+        console.log(humanAnswer2High)
+        //remove before final submit, just checking
 
         while (computerNumber !== theNumber && count < 10) {
-            computerNumber(guessMin, guessMax)
+            computerNumber(guessMin, guessMax);
             count += 1;
-            if (computerNumber > theNumber) {
-                console.log(humanAnswer2High);
+            console.log(count)//remove before final submit, just checking
+            console.log(computerQuestionHighLow);
+            console.log('Hooray!!!!!!  I\'m such a smart computer!!!!! \(Now put some underpants on my head.\)')
+
+            if (humanAnswer2High === 'n' || humanAnswer2High === 'no') {
                 guessMax = computersGuess;
-                computersGuess = computerNumber(guessMin, guessMax);
-                console.log('this is the computers guess ' + computersGuess);
-                break;
-            } else if (computerNumber < theNumber) {
-                console.log(humanAnswer2Low);
+                return computerNumber(guessMin, guessMax)
+
+            } else if (humanAnswer2High === 'y' || humanAnswer2High === 'yes') {
                 guessMin = computersGuess;
-                computersGuess = computerNumber(guessMin, guessMax);
-                console.log('this is the computers guess ' + computersGuess);
-                break;
-            } else {
-                console.log(humanAnswerJustRight);
-                break;
+                return computerNumber(guessMin, guessMax)
+
             }
-        } process.exit
+
+            await ask(computerQuestion);
+
+        }
+
+        process.exit
     }
     comparingNumbers();
-    
 }
+
 gameStart();
 
 
